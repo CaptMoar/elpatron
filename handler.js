@@ -16,19 +16,17 @@ app.get('/', (req, res) => {
   res.send(`yi boi`)
 });
 
-app.post('/informe', (req, res) => {
+app.post('/resumen', (req, res) => {
   var params = {
-    TableName: 'ssff-informe',
+    TableName: 'ssff-informe-resumen',
     Limit: 20,
-  };
+  }
 
   docClient.scan(params, async (err, result) => {
-    console.log(result)
     if (err) {
       console.log(`[ERR] ${err}`)
     } else {
-      const { items } = await result;
-      console.log(JSON.stringify(result))
+      const { items } = await result
       res.json({
         success: true,
         message: `aca va el informe`,
@@ -38,24 +36,24 @@ app.post('/informe', (req, res) => {
   });
 });
 
-// app.post('/informe/pag', (req, res) => {
-//   const { pageSize, lastItem } = req.body;
-//   try {
-//     const params = {
-//       TableName: 'ssff-informe',
-//       Limit: pageSize,
-//     };
-//     if (lastItem) {
-//       params.ExclusiveStartKey = { item_id: lastItem };
-//     }
-//     const response = await dynamoDb.scan(params).promise();
-//     return {
-//       items: response.Items,
-//       lastItem: response.LastEvaluatedKey
-//     }
-//   } catch (error) {
-//     res.json({pageSize, lastItem});
-//   }
-// });
+app.post('/informe', (req, res) => {
+  var params = {
+    TableName: 'ssff-informe',
+    Limit: 20,
+  };
+
+  docClient.scan(params, async (err, result) => {
+    if (err) {
+      console.log(`[ERR] ${err}`)
+    } else {
+      const { items } = await result
+      res.json({
+        success: true,
+        message: `aca va el informe`,
+        informe: result
+      });
+    }
+  });
+});
 
 module.exports.generic = http(app);
