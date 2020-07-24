@@ -1,0 +1,36 @@
+# Welcome to Serverless!
+
+service: ssff-0167-informe
+
+custom:
+  tableName: 'ssff-informe'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-west-2:140176884735:table/ssff-informe"
+  environment:
+    tableName: ${self:custom.tableName}
+
+plugins:
+  - serverless-offline
+
+functions:
+  app:
+    handler: handler.generic
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
+
+

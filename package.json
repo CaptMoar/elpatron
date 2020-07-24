@@ -1,0 +1,21 @@
+{
+  "name": "ssff-0167-informe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "dependencies": {
+    "aws-sdk": "^2.716.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "serverless-http": "^2.5.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^6.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
