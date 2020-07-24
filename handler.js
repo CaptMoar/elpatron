@@ -41,15 +41,14 @@ app.post('/resumen', (req, res) => {
   });
 });
 
-app.post('/auditoria', (req, res) => {
+app.post('/auditoria/getById', (req, res) => {
   var params = {
     KeyConditionExpression: 'id_audio = :id_audio',
     ExpressionAttributeValues: {
-        ':id_audio': {'S': '2020_07_10_13901774_9'}
+        ':id_audio': {'S': req.body.id_audio}
     },
     TableName: "ssff-informe" 
-  }
-
+  }  
   docClient.query(params, async (err, result) => {
     if (err) {
       console.log(`[ERR] ${err}`)
