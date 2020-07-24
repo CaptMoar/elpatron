@@ -3,6 +3,7 @@
 const http = require('serverless-http');
 const express = require('express');
 const aws = require('aws-sdk');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const { response } = require('express');
 
@@ -10,6 +11,7 @@ const app = express();
 const docClient = new aws.DynamoDB();
 const tableName = process.env.tableName
 
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
