@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const { response } = require('express');
 
 const app = express();
-const docClient = new aws.DynamoDB.DocumentClient();
+const docClient = new aws.DynamoDB();
 const tableName = process.env.tableName
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,12 +28,42 @@ app.post('/resumen', (req, res) => {
     } else {
       const { items } = await result
       res.json({
-        success: true,
-        message: `aca va el informe`,
-        informe: result
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        },  
+        body: result
       });
     }
   });
+});
+
+app.post('/auditoria', (req, res) => {
+  var params = {
+    KeyConditionExpression: 'id_audio = :id_audio',
+    ExpressionAttributeValues: {
+        ':id_audio': {'S': '2020_07_10_13901774_9'}
+    },
+    TableName: "ssff-informe" 
+  }
+
+  docClient.query(params, async (err, result) => {
+    if (err) {
+      console.log(`[ERR] ${err}`)
+    } else {
+      const { items } = await result
+      res.json({
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        }, 
+        body: result
+      });
+    }
+  });
+
 });
 
 app.post('/informe', (req, res) => {
@@ -48,9 +78,12 @@ app.post('/informe', (req, res) => {
     } else {
       const { items } = await result
       res.json({
-        success: true,
-        message: `aca va el informe`,
-        informe: result
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        },     
+        body: result
       });
     }
   });

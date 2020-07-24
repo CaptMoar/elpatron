@@ -33,6 +33,34 @@ functions:
     handler: handler.generic
     events:
       - http: ANY /
+        cors:
+          origin:
+            - "http://localhost:3000"
+          headers:
+            - Accept
+            - Origin
+            - DNT
+            - User-Agent
+            - Referer
+            - Content-Type
+            - X-Amz-Date
+            - x-amz-date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
       - http: ANY {proxy+}
-
-
+        cors:
+          origin:
+            - "http://localhost:3000"
+          headers:
+            - Accept
+            - Origin
+            - DNT
+            - User-Agent
+            - Referer
+            - Content-Type
+            - X-Amz-Date
+            - x-amz-date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
