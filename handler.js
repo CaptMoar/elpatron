@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 app.post('/resumen', (req, res) => {
   var params = {
     TableName: 'ssff-informe-resumen',
-    Limit: 20,
+    Limit: 100,
   }
 
   docClient.scan(params, async (err, result) => {
@@ -44,9 +44,9 @@ app.post('/resumen', (req, res) => {
 app.post('/resumen/getByRut', (req, res) => {
   var params = {
     TableName: "ssff-informe-resumen",
-    FilterExpression: 'rut = :rut',
+    FilterExpression: 'contains(rut, :rut)',
     ExpressionAttributeValues: {
-      //":rut": {"S": "012019183-7"}     
+      //":rut": {"S": "12019183-7"}     
       ":rut": {"S": JSON.parse(req.body.toString('utf8')).rut} 
     }  
   }
