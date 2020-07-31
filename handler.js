@@ -46,7 +46,7 @@ app.post('/resumen/getByRut', (req, res) => {
     TableName: "ssff-informe-resumen",
     FilterExpression: 'contains(rut, :rut)',
     ExpressionAttributeValues: {
-      //":rut": {"S": "12019183-7"}     
+      //":rut": {"S": "12019183-7"}
       ":rut": {"S": JSON.parse(req.body.toString('utf8')).rut} 
     }  
   }
