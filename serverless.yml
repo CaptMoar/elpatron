@@ -32,11 +32,5 @@ functions:
   app:
     handler: handler.generic
     events:
-      - http: ANY /
-        cors:
-          origin:
-            - "http://localhost:3000"
+      - http: ANY /        
       - http: ANY {proxy+}
-        cors:
-          origin:
-            - "http://localhost:3000"
