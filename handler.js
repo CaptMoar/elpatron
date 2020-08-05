@@ -27,7 +27,12 @@ app.get('/', (req, res) => {
 
 app.post('/resumen', (req, res) => {
   var params = {
-    TableName: 'ssff-informe-resumen',    
+    TableName: 'ssff-informe-resumen', 
+    FilterExpression: 'contains(fecha, :fecha)',
+    ExpressionAttributeValues: {
+      ":fecha": {"S": new Date(Date.now()).toISOString().split('T')[0]}
+      //":fecha": {"S": "2020-08"}
+    }       
   }
 
   docClient.scan(params, async (err, result) => {
