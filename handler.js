@@ -9,6 +9,7 @@ const { response } = require('express');
 
 const app = express();
 const docClient = new aws.DynamoDB();
+const docClientUpd = new aws.DynamoDB.DocumentClient();
 const tableName = process.env.tableName
 
 app.use(cors())
@@ -139,6 +140,42 @@ app.post('/auditoria/getById', (req, res) => {
     TableName: "ssff-informe" 
   }  
   docClient.query(params, async (err, result) => {
+    if (err) {
+      console.log(`[ERR] ${err}`)
+    } else {
+      const { items } = await result
+      res.json({
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        }, 
+        body: result
+      });
+    }
+  });
+});
+
+app.post('/auditoria/guardarCaso', (req, res) => {
+  console.log("respuesta: "+req);
+  var params = {
+    TableName: "ssff-informe-resumen",
+    Key: {
+      //id_audio: "2020_07_24_12529772_2"
+      id_audio: JSON.parse(req.body.toString('utf8')).id_audio
+    },
+    UpdateExpression: "set motivoRechazo = :motivoRechazo, observacion = :observacion, estado = :estado",
+    ExpressionAttributeValues:{
+      //":motivoRechazo": "audio cortado",
+      ":motivoRechazo": JSON.parse(req.body.toString('utf8')).motivoRechazo,
+      //":observacion": "mal audio",
+      ":observacion": JSON.parse(req.body.toString('utf8')).observacion,
+      ":estado": "GESTIONADO",
+    },
+    ReturnValues:"UPDATED_NEW"
+  }  
+
+  docClientUpd.update(params, async (err, result) => {
     if (err) {
       console.log(`[ERR] ${err}`)
     } else {
