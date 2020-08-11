@@ -32,8 +32,8 @@ app.post('/resumen', (req, res) => {
     TableName: 'ssff-informe-resumen', 
     FilterExpression: 'contains(fecha, :fecha)',
     ExpressionAttributeValues: {
-      ":fecha": {"S": new Date(Date.now()).toISOString().split('T')[0]}
-      //":fecha": {"S": "2020-08"}
+      //":fecha": {"S": new Date(Date.now()).toISOString().split('T')[0]}
+      ":fecha": {"S": "2020-08"}
     }       
   }
 
@@ -158,7 +158,6 @@ app.post('/auditoria/getById', (req, res) => {
 });
 
 app.post('/auditoria/guardarCaso', (req, res) => {
-  console.log("respuesta: "+req);
   var params = {
     TableName: "ssff-informe-resumen",
     Key: {
@@ -191,6 +190,48 @@ app.post('/auditoria/guardarCaso', (req, res) => {
       });
     }
   });
+
+  console.log("respuesta 1: "+JSON.stringify(JSON.parse(req.body.toString('utf8')).data));
+  console.log("respuesta 2: "+JSON.stringify(JSON.parse(req.body.toString('utf8'))));
+
+  const entidades = JSON.parse(req.body.toString('utf8')).data;
+
+  entidades.forEach(element => {
+    console.log(element.validarEstado.BOOL)    
+    console.log(element.entidad.S)
+    console.log(element.id_audio.S)    
+
+    //falta probar la actualización de datos de la tabla ssff-informe
+    var params = {
+      TableName: "ssff-informe",
+      Key: {
+        id_audio: element.id_audio.S,
+        entidad: element.entidad.S
+      },
+      UpdateExpression: "set gestion = :gestion",
+      ExpressionAttributeValues:{        
+        ":gestion": element.validarEstado.BOOL,
+      },
+      ReturnValues:"UPDATED_NEW"
+    }  
+  
+    docClientUpd.update(params, async (err, result) => {
+      if (err) {
+        console.log(`[ERR] ${err}`)
+      } else {
+        const { items } = await result
+        res.json({
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+          }, 
+          body: result
+        });
+      }
+    });    
+  });
+
 });
 
 app.post('/auditoria/getByAudio', (req, res) => {
