@@ -10,6 +10,7 @@ const { response } = require('express');
 const app = express();
 const docClient = new aws.DynamoDB();
 const docClientUpd = new aws.DynamoDB.DocumentClient();
+const s3 = new aws.S3();
 const tableName = process.env.tableName
 
 app.use(cors())
@@ -190,6 +191,31 @@ app.post('/auditoria/guardarCaso', (req, res) => {
       });
     }
   });
+});
+
+app.post('/auditoria/getByAudio', (req, res) => {
+  var params = {
+    Bucket: 'ssff-auditoria-convenios',
+    //Key: '2020_05_06_14329564_8.mp3',
+    Key: JSON.parse(req.body.toString('utf8')).id_audio + '.mp3',
+    Expires: 60 * 5
+  }
+  
+  try{
+    var url = s3.getSignedUrl('getObject', params);
+    //console.log(url)
+    res.json({
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      }, 
+      body: url
+    });   
+  } catch(err) {
+    console.log(err)
+  }
+
 });
 
 app.post('/informe', (req, res) => {
