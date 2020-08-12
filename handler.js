@@ -189,31 +189,25 @@ app.post('/auditoria/guardarCaso', (req, res) => {
         body: result
       });
     }
-  });
-
-  console.log("respuesta 1: "+JSON.stringify(JSON.parse(req.body.toString('utf8')).data));
-  console.log("respuesta 2: "+JSON.stringify(JSON.parse(req.body.toString('utf8'))));
+  });  
 
   const entidades = JSON.parse(req.body.toString('utf8')).data;
 
   entidades.forEach(element => {
-    console.log(element.validarEstado.BOOL)    
-    console.log(element.entidad.S)
-    console.log(element.id_audio.S)    
-
-    //falta probar la actualización de datos de la tabla ssff-informe
+    
     var params = {
       TableName: "ssff-informe",
       Key: {
         id_audio: element.id_audio.S,
         entidad: element.entidad.S
       },
-      UpdateExpression: "set gestion = :gestion",
+      UpdateExpression: "set validarEstado = :validarEstado",
       ExpressionAttributeValues:{        
-        ":gestion": element.validarEstado.BOOL,
+        ":validarEstado": element.validarEstado.BOOL,
       },
       ReturnValues:"UPDATED_NEW"
     }  
+    //console.log(params)
   
     docClientUpd.update(params, async (err, result) => {
       if (err) {
@@ -221,11 +215,7 @@ app.post('/auditoria/guardarCaso', (req, res) => {
       } else {
         const { items } = await result
         res.json({
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true,
-          }, 
+          statusCode: 200,         
           body: result
         });
       }
