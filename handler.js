@@ -158,46 +158,45 @@ app.post('/auditoria/getById', (req, res) => {
 });
 
 app.post('/auditoria/guardarCaso', (req, res) => {
-  console.log("motivoRechazo: "+JSON.parse(req.body.toString('utf8')).motivoRechazo)
-  console.log("observacion: "+JSON.parse(req.body.toString('utf8')).observacion)
-  var params = {
+  let motivoRechazo = ''
+  let observacion = ''    
+  if (!JSON.parse(req.body.toString('utf8')).motivoRechazo || !JSON.parse(req.body.toString('utf8')).observacion) {
+    motivoRechazo = ''
+    observacion = ''
+  }
+  else {
+    motivoRechazo = JSON.parse(req.body.toString('utf8')).motivoRechazo
+    observacion = JSON.parse(req.body.toString('utf8')).observacion
+  }
+  var paramsResumen = {
     TableName: "ssff-informe-resumen",
-    Key: {
-      //id_audio: "2020_07_24_12529772_2"
+    Key: {      
       id_audio: JSON.parse(req.body.toString('utf8')).id_audio
     },
     UpdateExpression: "set motivoRechazo = :motivoRechazo, observacion = :observacion, estado = :estado",
-    ExpressionAttributeValues:{
-      //":motivoRechazo": "audio cortado",
-      ":motivoRechazo": JSON.parse(req.body.toString('utf8')).motivoRechazo,
-      //":observacion": "mal audio",
-      ":observacion": JSON.parse(req.body.toString('utf8')).observacion,
+    ExpressionAttributeValues:{      
+      ":motivoRechazo": motivoRechazo,
+      ":observacion": observacion,
       ":estado": "GESTIONADO",
     },
     ReturnValues:"UPDATED_NEW"
   }  
 
-  docClientUpd.update(params, async (err, result) => {
+  docClientUpd.update(paramsResumen, async (err, result) => {
+    console.log('1 UPDATE ssff-informe-resumen')
     if (err) {
       console.log(`[ERR] ${err}`)
     } else {
       const { items } = await result
-      res.json({
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-        }, 
-        body: result
-      });
+      console.log(`[INFO] ${items}`)
     }
   });  
-
+  
   const entidades = JSON.parse(req.body.toString('utf8')).data;
 
   entidades.forEach(element => {
     
-    var params = {
+    var paramsInforme = {
       TableName: "ssff-informe",
       Key: {
         id_audio: element.id_audio.S,
@@ -209,19 +208,21 @@ app.post('/auditoria/guardarCaso', (req, res) => {
       },
       ReturnValues:"UPDATED_NEW"
     }  
-    //console.log(params)
-  
-    docClientUpd.update(params, async (err, result) => {
+    
+    docClientUpd.update(paramsInforme, async (err, result) => {
+      console.log('2 UPDATE ssff-informe')
       if (err) {
         console.log(`[ERR] ${err}`)
       } else {
-        const { items } = await result
-        res.json({
-          statusCode: 200,         
-          body: result
-        });
+        const { items } = await result       
+        console.log(`[INFO] ${items}`) 
       }
     });    
+  });
+  console.log('------FIN------')
+  res.json({
+    statusCode: 200,         
+    body: 'OK'
   });
 
 });
