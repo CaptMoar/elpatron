@@ -32,8 +32,8 @@ app.post('/resumen', (req, res) => {
     TableName: 'ssff-informe-resumen', 
     FilterExpression: 'contains(fecha, :fecha)',
     ExpressionAttributeValues: {
-      //":fecha": {"S": new Date(Date.now()).toISOString().split('T')[0]}
-      ":fecha": {"S": "2020-08"}
+      ":fecha": {"S": new Date(Date.now()).toISOString().split('T')[0]}
+      //":fecha": {"S": "2020-08"}
     }       
   }
 
@@ -158,6 +158,8 @@ app.post('/auditoria/getById', (req, res) => {
 });
 
 app.post('/auditoria/guardarCaso', (req, res) => {
+  console.log("motivoRechazo: "+JSON.parse(req.body.toString('utf8')).motivoRechazo)
+  console.log("observacion: "+JSON.parse(req.body.toString('utf8')).observacion)
   var params = {
     TableName: "ssff-informe-resumen",
     Key: {
