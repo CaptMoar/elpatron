@@ -1,6 +1,6 @@
 # Welcome to Serverless!
 
-service: ssff-0167-informe
+service: ssff-0167-auditoria
 
 custom:
   tableName: 'ssff-informe'
